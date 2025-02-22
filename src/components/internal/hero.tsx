@@ -207,7 +207,7 @@ export default function HeroGeometric({
                     delay={0.4}
                     rotate={-8}
                     gradient="from-violet-500/20"
-                    className="absolute left-[5%] bottom-[5%] scale-65 md:scale-90"
+                    className="absolute left-[10%] bottom-[5%] scale-65 md:scale-90"
                 />
 
                 <ImageShowcase
