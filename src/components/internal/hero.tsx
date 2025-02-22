@@ -58,7 +58,7 @@ export const ImageShowcase = ({
                 gradient
             )}
         >
-            <div className="relative h-40 w-40 lg:h-60 lg:w-60 overflow-hidden p-1 rounded-3xl hover:scale-110 duration-300">
+            <div className="relative h-32 w-32 lg:h-60 lg:w-60 overflow-hidden p-1 rounded-3xl hover:scale-110 duration-300">
                 {/* Glassmorphic effect */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/[0.08] to-transparent backdrop-blur-[2px]" />
 
@@ -274,7 +274,7 @@ export default function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="flex items-center border-[1px] border-white w-3/4 p-3  text-white border-gradient-to-r from-indigo-300 via-white/90 to-rose-300 rounded-full justify-between mt-10 pl-6"
+                        className="flex items-center border-[1px] border-white w-full lg:w-3/4 p-3  text-white border-gradient-to-r from-indigo-300 via-white/90 to-rose-300 rounded-full justify-between mt-10 pl-6"
                     >
                         <motion.div
                             animate={{
@@ -287,14 +287,14 @@ export default function HeroGeometric({
                                 ease: 'linear'
                             }}
                         >
-                            <Sparkles className="w-6 h-6 text-pink-500" />
+                            <Sparkles className="w-4 h-4 lg:h-6 lg:w-6 text-pink-500" />
                         </motion.div>
                         <input
                             placeholder="Describe the image you want to create"
                             className="bg-transparent outline-none w-full px-4"
                         />
 
-                        <button className="bg-pink-600 px-4 py-2 rounded-2xl">
+                        <button className="bg-pink-600  px-2 py-1 lg:py-2 lg:px-4 rounded-2xl">
                             Generate
                         </button>
                     </motion.div>
