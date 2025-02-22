@@ -260,7 +260,7 @@ export default function HeroGeometric({
                             <br />
                             <span
                                 className={cn(
-                                    'bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white/90 to-rose-300 p-5',
+                                    'bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white/90 to-rose-300 p-5  [text-shadow:_0_0_30px_rgb(255_255_255_/_40%)]',
                                     pacifico.className
                                 )}
                             >
@@ -276,8 +276,19 @@ export default function HeroGeometric({
                         animate="visible"
                         className="flex items-center border-[1px] border-white w-3/4 p-3  text-white border-gradient-to-r from-indigo-300 via-white/90 to-rose-300 rounded-full justify-between mt-10 pl-6"
                     >
-                        <Sparkles className="w-6 h-6 text-pink-500" />
-
+                        <motion.div
+                            animate={{
+                                scale: [0.9, 1.2, 0.9],
+                                rotate: [0, 180, 360]
+                            }}
+                            transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                ease: 'linear'
+                            }}
+                        >
+                            <Sparkles className="w-6 h-6 text-pink-500" />
+                        </motion.div>
                         <input
                             placeholder="Describe the image you want to create"
                             className="bg-transparent outline-none w-full px-4"
