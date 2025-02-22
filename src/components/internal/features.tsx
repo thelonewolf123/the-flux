@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useScroll } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Brain, Code2, ImageIcon, Sparkles, Wand2, Zap } from 'lucide-react'
 import { useRef } from 'react'
 
@@ -72,10 +72,6 @@ const featureSections = [
 
 export default function Features() {
     const containerRef = useRef<HTMLDivElement>(null)
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start end', 'end start']
-    })
 
     return (
         <div
