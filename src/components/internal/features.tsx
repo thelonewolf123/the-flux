@@ -74,7 +74,8 @@ export default function Features() {
     const containerRef = useRef<HTMLDivElement>(null)
 
     return (
-        <div
+        <section
+            id="feature"
             ref={containerRef}
             className="relative bg-[#030303] py-32 overflow-hidden"
         >
@@ -206,6 +207,6 @@ export default function Features() {
                     ))}
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

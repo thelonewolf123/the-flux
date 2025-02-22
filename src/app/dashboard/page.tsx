@@ -1,6 +1,3 @@
-'use client'
-
-import { motion } from 'framer-motion'
 import {
     Download,
     Heart,
@@ -70,11 +67,8 @@ export default function Dashboard() {
                                 change: 'Last shared 2h ago'
                             }
                         ].map((stat, index) => (
-                            <motion.div
+                            <div
                                 key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
                                 className="p-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 backdrop-blur-sm transition-all group"
                             >
                                 <div className="flex items-center gap-4">
@@ -93,7 +87,7 @@ export default function Dashboard() {
                                         </p>
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
 
@@ -117,12 +111,9 @@ export default function Dashboard() {
 
                     {/* Gallery Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {recentGenerations.map((gen, index) => (
-                            <motion.div
+                        {recentGenerations.map((gen) => (
+                            <div
                                 key={gen.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: index * 0.1 }}
                                 className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.08] hover:border-white/20 backdrop-blur-sm transition-all"
                             >
                                 <div className="relative aspect-square">
@@ -139,13 +130,13 @@ export default function Dashboard() {
                                             </p>
                                             <div className="flex items-center justify-between">
                                                 <div className="flex gap-2">
-                                                    <button className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
+                                                    <button className="p-2 rounded-lg bg-white/30 hover:bg-white/50 transition-colors">
                                                         <Heart className="w-4 h-4" />
                                                     </button>
-                                                    <button className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
+                                                    <button className="p-2 rounded-lg bg-white/30 hover:bg-white/50 transition-colors">
                                                         <Download className="w-4 h-4" />
                                                     </button>
-                                                    <button className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
+                                                    <button className="p-2 rounded-lg bg-white/30 hover:bg-white/50 transition-colors">
                                                         <Share2 className="w-4 h-4" />
                                                     </button>
                                                 </div>
@@ -156,22 +147,18 @@ export default function Dashboard() {
                                         </div>
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
 
                         {/* New Creation Card */}
-                        <motion.button
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="aspect-square rounded-2xl border-2 border-dashed border-white/[0.08] hover:border-white/20 flex flex-col items-center justify-center gap-2 transition-colors group"
-                        >
+                        <button className="aspect-square rounded-2xl border-2 border-dashed border-white/[0.08] hover:border-white/20 flex flex-col items-center justify-center gap-2 transition-colors group">
                             <div className="p-4 rounded-xl bg-white/[0.03] group-hover:bg-white/[0.08] transition-colors">
                                 <Plus className="w-6 h-6 text-white/40 group-hover:text-white/80 transition-colors" />
                             </div>
                             <span className="text-sm text-white/40 group-hover:text-white/80 transition-colors">
                                 New Creation
                             </span>
-                        </motion.button>
+                        </button>
                     </div>
                 </main>
             </div>

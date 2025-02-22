@@ -61,7 +61,10 @@ const pricingTiers: PricingTier[] = [
 
 export default function Pricing() {
     return (
-        <div className="min-h-screen w-full flex flex-col items-center overflow-hidden bg-[#030303] py-20 relative">
+        <section
+            id="pricing"
+            className="min-h-screen w-full flex flex-col items-center overflow-hidden bg-[#030303] py-20 relative"
+        >
             {/* Add the Lemon Squeezy script */}
             <script src="https://assets.lemonsqueezy.com/lemon.js" defer />
 
@@ -178,6 +181,6 @@ export default function Pricing() {
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/80 pointer-events-none" />
-        </div>
+        </section>
     )
 }
