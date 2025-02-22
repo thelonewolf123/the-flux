@@ -95,7 +95,7 @@ export default function Pricing() {
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4 z-10">
-                {pricingTiers.map((tier, index) => (
+                {pricingTiers.map((tier) => (
                     <motion.div
                         key={tier.name}
                         initial={{ opacity: 0, y: 30 }}

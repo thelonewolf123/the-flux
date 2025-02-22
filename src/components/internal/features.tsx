@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll } from 'framer-motion'
 import { Brain, Code2, ImageIcon, Sparkles, Wand2, Zap } from 'lucide-react'
 import { useRef } from 'react'
 
@@ -76,8 +76,6 @@ export default function Features() {
         target: containerRef,
         offset: ['start end', 'end start']
     })
-
-    const y = useTransform(scrollYProgress, [0, 1], [100, -100])
 
     return (
         <div
