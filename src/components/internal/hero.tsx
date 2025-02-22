@@ -1,18 +1,99 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Sparkles } from 'lucide-react'
 import { Pacifico } from 'next/font/google'
 import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
 
+const images = [
+    'https://img.freepik.com/free-photo/model-looking-into-windo_1301-2992.jpg?semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/sensual-brunette-model-fashion-red-suit-garden_149155-4573.jpg?semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/sensual-brunette-model-fashion-swimsuit-posing-terrace_149155-4497.jpg?semt=ais_hybrid',
+    'https://img.freepik.com/premium-photo/portrait-beautiful-woman-outdoors_173770-191.jpg?ga=GA1.1.18769489.1740249920&semt=ais_hybrid',
+    'https://img.freepik.com/premium-photo/portrait-young-woman-swimming-sea_1048944-385676.jpg?ga=GA1.1.18769489.1740249920&semt=ais_hybrid'
+]
 const pacifico = Pacifico({
     subsets: ['latin'],
     weight: ['400'],
     variable: '--font-pacifico'
 })
 
-function ElegantShape({
+export const ImageShowcase = ({
+    imageSrc,
+    className,
+    delay = 0,
+    gradient,
+    rotate
+}: {
+    imageSrc: string
+    className?: string
+    delay?: number
+    gradient?: string
+    rotate: number
+}) => {
+    return (
+        <motion.div
+            initial={{
+                opacity: 0,
+                y: -150,
+                rotate: rotate - 15
+            }}
+            animate={{
+                opacity: 1,
+                y: 0,
+                rotate: rotate
+            }}
+            transition={{
+                duration: 1.2,
+                delay,
+                ease: [0.23, 0.86, 0.39, 0.96]
+            }}
+            className={cn(
+                'relative cursor-pointer rounded-3xl',
+                'bg-white/[0.03] backdrop-blur-[2px]',
+                'border border-white/[0.15] shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]',
+                className,
+                gradient
+            )}
+        >
+            <div className="relative h-40 w-40 lg:h-60 lg:w-60 overflow-hidden p-1 rounded-3xl hover:scale-110 duration-300">
+                {/* Glassmorphic effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/[0.08] to-transparent backdrop-blur-[2px]" />
+
+                {/* Hover glow effect */}
+                <motion.div
+                    className="absolute inset-0 opacity-0  transition-opacity"
+                    animate={{
+                        boxShadow: [
+                            '0 0 20px rgba(255,255,255,0.1)',
+                            '0 0 30px rgba(255,255,255,0.2)',
+                            '0 0 20px rgba(255,255,255,0.1)'
+                        ]
+                    }}
+                    transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'linear'
+                    }}
+                />
+
+                {/* Image */}
+                <Image
+                    src={imageSrc}
+                    alt="Showcase image"
+                    fill
+                    className="object-cover rounded-2xl transform transition-transform duration-700 [mask-image:linear-gradient(to_bottom,white,rgb(255_255_255_/_0.8))] hover:[mask-image:none]"
+                />
+
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent rounded-2xl" />
+            </div>
+        </motion.div>
+    )
+}
+export const ElegantShape = ({
     className,
     delay = 0,
     width = 400,
@@ -26,7 +107,7 @@ function ElegantShape({
     height?: number
     rotate?: number
     gradient?: string
-}) {
+}) => {
     return (
         <motion.div
             initial={{
@@ -80,7 +161,7 @@ function ElegantShape({
 
 export default function HeroGeometric({
     badge = 'NSFW+',
-    title1 = 'Think and Run',
+    title1 = 'Create',
     title2 = 'Your Imagination'
 }: {
     badge?: string
@@ -101,57 +182,52 @@ export default function HeroGeometric({
     }
 
     return (
-        <div className="min-h-fit w-full flex flex-col items-center overflow-hidden bg-[#030303]">
+        <div className="min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#030303]">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-rose-500/[0.05] blur-3xl" />
 
             <div className="absolute inset-0 overflow-hidden">
-                <ElegantShape
+                <ImageShowcase
+                    imageSrc={images[0]}
                     delay={0.3}
-                    width={600}
-                    height={140}
                     rotate={12}
-                    gradient="from-indigo-500/[0.15]"
-                    className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
+                    gradient="from-indigo-500/20"
+                    className="absolute left-[-5%] top-[15%] md:top-[20%] scale-75 md:scale-100"
                 />
 
-                <ElegantShape
+                <ImageShowcase
+                    imageSrc={images[1]}
                     delay={0.5}
-                    width={500}
-                    height={120}
                     rotate={-15}
-                    gradient="from-rose-500/[0.15]"
-                    className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
+                    gradient="from-rose-500/20"
+                    className="absolute right-[-5%] top-[60%] md:top-[65%] scale-75 md:scale-100"
                 />
 
-                <ElegantShape
+                <ImageShowcase
+                    imageSrc={images[2]}
                     delay={0.4}
-                    width={300}
-                    height={80}
                     rotate={-8}
-                    gradient="from-violet-500/[0.15]"
-                    className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
+                    gradient="from-violet-500/20"
+                    className="absolute left-[5%] bottom-[5%] scale-65 md:scale-90"
                 />
 
-                <ElegantShape
+                <ImageShowcase
+                    imageSrc={images[3]}
                     delay={0.6}
-                    width={200}
-                    height={60}
                     rotate={20}
-                    gradient="from-amber-500/[0.15]"
-                    className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]"
+                    gradient="from-amber-500/20"
+                    className="absolute right-[15%] top-[5%] scale-50 md:scale-75"
                 />
 
-                <ElegantShape
+                <ImageShowcase
+                    imageSrc={images[4]}
                     delay={0.7}
-                    width={150}
-                    height={40}
                     rotate={-25}
-                    gradient="from-cyan-500/[0.15]"
-                    className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]"
+                    gradient="from-cyan-500/20"
+                    className="absolute left-[20%] top-[5%] scale-50 md:scale-75"
                 />
             </div>
 
-            <div className="mt-40 z-10 container mx-auto px-4 md:px-6 mb-40">
+            <div className=" z-10 container mx-auto px-4 md:px-6 mb-40">
                 <div className="flex flex-col items-center max-w-3xl mx-auto text-center">
                     <motion.div
                         custom={0}
@@ -198,11 +274,13 @@ export default function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="flex border-[1px] border-white w-2/3 p-3 pl-8 text-white border-gradient-to-r from-indigo-300 via-white/90 to-rose-300 rounded-full justify-between mt-10"
+                        className="flex items-center border-[1px] border-white w-3/4 p-3  text-white border-gradient-to-r from-indigo-300 via-white/90 to-rose-300 rounded-full justify-between mt-10 pl-6"
                     >
+                        <Sparkles className="w-6 h-6 text-pink-500" />
+
                         <input
                             placeholder="Describe the image you want to create"
-                            className="bg-transparent outline-none w-full px-2"
+                            className="bg-transparent outline-none w-full px-4"
                         />
 
                         <button className="bg-pink-600 px-4 py-2 rounded-2xl">
