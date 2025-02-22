@@ -13,23 +13,25 @@ interface PricingTier {
     description: string
     features: string[]
     highlight?: boolean
+    env: string
 }
 
 const pricingTiers: PricingTier[] = [
     {
         name: 'Starter',
-        price: '$9',
+        price: '₹299',
         description: 'Perfect for indie creators and hobbyists',
         features: [
             '100 generations/month',
             'Basic resolution',
             'Community support',
             '24h response time'
-        ]
+        ],
+        env: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_URL_299 || ''
     },
     {
         name: 'Pro',
-        price: '$29',
+        price: '₹599',
         description: 'For professional creators and small teams',
         features: [
             '500 generations/month',
@@ -38,11 +40,12 @@ const pricingTiers: PricingTier[] = [
             '4h response time',
             'Custom styles'
         ],
-        highlight: true
+        highlight: true,
+        env: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_URL_499 || ''
     },
     {
         name: 'Enterprise',
-        price: '$99',
+        price: '₹999',
         description: 'For large teams and businesses',
         features: [
             'Unlimited generations',
@@ -51,13 +54,17 @@ const pricingTiers: PricingTier[] = [
             '1h response time',
             'Custom styles',
             'API access'
-        ]
+        ],
+        env: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_URL_999 || ''
     }
 ]
 
 export default function Pricing() {
     return (
         <div className="min-h-screen w-full flex flex-col items-center overflow-hidden bg-[#030303] py-20 relative">
+            {/* Add the Lemon Squeezy script */}
+            <script src="https://assets.lemonsqueezy.com/lemon.js" defer />
+
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-rose-500/[0.05] blur-3xl" />
 
             {/* Floating shapes */}
@@ -111,7 +118,7 @@ export default function Pricing() {
                             'rounded-2xl p-8',
                             'backdrop-blur-sm',
                             'border-2',
-                            'transition-all duration-300',
+                            'transition-all duration-300 group',
                             tier.highlight
                                 ? 'border-pink-500/50 bg-gradient-to-b from-pink-500/[0.15] to-transparent'
                                 : 'border-white/[0.08] bg-gradient-to-b from-white/[0.08] to-transparent'
@@ -122,7 +129,7 @@ export default function Pricing() {
                                 {tier.name}
                             </h3>
                             {tier.highlight && (
-                                <Sparkles className="w-5 h-5 text-pink-500" />
+                                <Sparkles className="group-hover:rotate-45 duration-700 w-5 h-5 text-pink-500" />
                             )}
                         </div>
                         <div className="mb-6">
@@ -132,18 +139,17 @@ export default function Pricing() {
                             <span className="text-white/60 ml-2">/month</span>
                         </div>
                         <p className="text-white/60 mb-6">{tier.description}</p>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                        <a
+                            href={tier.env}
                             className={cn(
-                                'w-full py-3 px-6 rounded-xl font-medium transition-all',
+                                'w-full py-3 px-6 rounded-xl font-medium transition-all block text-center',
                                 tier.highlight
                                     ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white hover:from-pink-500 hover:to-rose-500'
                                     : 'bg-white/[0.08] text-white hover:bg-white/[0.12]'
                             )}
                         >
                             Get Started
-                        </motion.button>
+                        </a>
                         <div className="mt-8 space-y-4">
                             {tier.features.map((feature) => (
                                 <motion.div
