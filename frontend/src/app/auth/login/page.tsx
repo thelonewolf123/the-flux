@@ -191,9 +191,9 @@ export default function Login() {
                             <Button
                                 type="button"
                                 variant="outline"
-                                className="w-full h-12 bg-white/5 border-white/10 text-white hover:bg-white/10 rounded-xl flex items-center justify-center gap-3"
+                                className="w-full py-6 bg-white/5 border-white/10 text-white hover:bg-white/10 rounded-xl flex items-center justify-center gap-3"
                             >
-                                <TbBrandOnlyfans className="h-6 w-6" />
+                                <TbBrandOnlyfans className="size-16" />
                                 <span>Continue with OnlyFans</span>
                             </Button>
                         </motion.div>
