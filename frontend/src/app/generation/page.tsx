@@ -16,6 +16,7 @@ import React, { useState } from 'react'
 
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
+import { useGenerateStore } from '@/store/useGenerateStore'
 
 const dummyImages = Array(4).fill('/placeholder-image.jpg')
 
@@ -60,18 +61,18 @@ const ImagePreviewDialog = ({
 }
 
 export default function GenerationPage() {
-    const [selectedImages, setSelectedImages] = useState<SelectedImages>({
-        section1: null,
-        section2: null,
-        section3: null,
-        section4: null
-    })
+    const { selectedSections, write } = useGenerateStore()
 
     const handleImageSelect = (sectionId: string, imageIndex: number) => {
-        setSelectedImages((prev) => ({
-            ...prev,
-            [sectionId]: prev[sectionId] === imageIndex ? null : imageIndex
-        }))
+        write({
+            selectedSections: {
+                ...selectedSections,
+                [sectionId]:
+                    selectedSections[sectionId] === imageIndex
+                        ? null
+                        : imageIndex
+            }
+        })
     }
 
     return (
@@ -103,7 +104,7 @@ export default function GenerationPage() {
                                         key={i}
                                         sectionId={`section${i + 1}`}
                                         selectedImage={
-                                            selectedImages[`section${i + 1}`]
+                                            selectedSections[`section${i + 1}`]
                                         }
                                         onImageSelect={(imageIndex) =>
                                             handleImageSelect(
