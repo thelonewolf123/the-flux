@@ -5,6 +5,7 @@ import {
     ArrowLeft,
     ArrowRight,
     Check,
+    Clock,
     Image as ImageIcon,
     ImagePlus,
     Maximize2,
@@ -21,6 +22,28 @@ import { cn } from '@/lib/utils'
 import { useGenerateStore } from '@/store/useGenerateStore'
 
 const dummyImages = Array(4).fill('/placeholder-image.jpg')
+
+// Sample previous generations for history section
+const previousGenerations = [
+    {
+        id: 1,
+        imageUrl: '/placeholder-image.jpg',
+        prompt: 'A futuristic city with flying cars and neon lights',
+        timestamp: '2 hours ago'
+    },
+    {
+        id: 2,
+        imageUrl: '/placeholder-image.jpg',
+        prompt: 'Sunset over a tropical beach with palm trees',
+        timestamp: '5 hours ago'
+    },
+    {
+        id: 3,
+        imageUrl: '/placeholder-image.jpg',
+        prompt: 'Mountain landscape with snow peaks and a clear blue sky',
+        timestamp: '1 day ago'
+    }
+]
 
 interface SelectedImages {
     [key: string]: number | null
@@ -70,6 +93,7 @@ export default function GenerationPage() {
     const [prompt, setPrompt] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+    const [historyPreview, setHistoryPreview] = useState<string | null>(null)
 
     const handleImageSelect = (sectionId: string, imageIndex: number) => {
         write({
@@ -151,24 +175,8 @@ export default function GenerationPage() {
     // Steps definition
     const steps = [
         {
-            id: 'upload',
-            title: 'Upload Reference Image',
-            component: (
-                <UploadSection
-                    uploadedImage={uploadedImage}
-                    isDragging={isDragging}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    handleFileSelect={handleFileSelect}
-                    handleRemoveImage={handleRemoveImage}
-                    setIsPreviewOpen={setIsPreviewOpen}
-                />
-            )
-        },
-        {
             id: 'section1',
-            title: 'Select Background',
+            title: 'Background',
             component: (
                 <ImageSelectionStep
                     sectionId="section1"
@@ -182,7 +190,7 @@ export default function GenerationPage() {
         },
         {
             id: 'section2',
-            title: 'Select Style',
+            title: 'Style',
             component: (
                 <ImageSelectionStep
                     sectionId="section2"
@@ -196,7 +204,7 @@ export default function GenerationPage() {
         },
         {
             id: 'section3',
-            title: 'Select Lighting',
+            title: 'Lighting',
             component: (
                 <ImageSelectionStep
                     sectionId="section3"
@@ -205,19 +213,6 @@ export default function GenerationPage() {
                         handleImageSelect('section3', imageIndex)
                     }
                     description="Set the mood with perfect lighting"
-                />
-            )
-        },
-        {
-            id: 'section4',
-            title: 'Review & Generate',
-            component: (
-                <PromptAndGenerateStep
-                    uploadedImage={uploadedImage}
-                    prompt={prompt}
-                    setPrompt={setPrompt}
-                    isLoading={isLoading}
-                    handleGenerate={handleGenerate}
                 />
             )
         }
@@ -232,127 +227,306 @@ export default function GenerationPage() {
             </div>
 
             <div className="container mx-auto px-4 py-8 relative z-10">
-                <div className="h-[90vh] flex flex-col">
-                    {/* Stepper interface */}
-                    <div className="mb-6">
-                        <div className="flex items-center justify-between">
-                            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-rose-300">
-                                Create Your Perfect Image
-                            </h1>
-                        </div>
+                <div className="flex flex-col lg:flex-row gap-8 h-[90vh]">
+                    {/* Left side - Split into two sections */}
+                    <div className="lg:flex-1 flex flex-col space-y-6">
+                        {/* Upload Section - Top Half */}
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.1] overflow-hidden h-[42vh]"
+                        >
+                            <div className="p-6 border-b border-white/[0.1] bg-white/[0.02]">
+                                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-rose-300">
+                                    Reference Image
+                                </h2>
+                            </div>
 
-                        {/* Step indicators */}
-                        <div className="flex items-center justify-between mt-6 px-2">
-                            {steps.map((step, index) => (
-                                <React.Fragment key={step.id}>
-                                    <div
-                                        className={cn(
-                                            'relative flex flex-col items-center cursor-pointer',
-                                            index <= currentStep
-                                                ? 'text-white'
-                                                : 'text-white/40'
-                                        )}
+                            <div className="p-4 overflow-y-auto h-[calc(42vh-80px)] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                                <UploadSection
+                                    uploadedImage={uploadedImage}
+                                    isDragging={isDragging}
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={handleDrop}
+                                    handleFileSelect={handleFileSelect}
+                                    handleRemoveImage={handleRemoveImage}
+                                    setIsPreviewOpen={setIsPreviewOpen}
+                                />
+                            </div>
+                        </motion.div>
+
+                        {/* Image Selection Section - Bottom Half */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className={cn(
+                                'rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.1] overflow-hidden flex-1',
+                                !uploadedImage &&
+                                    'opacity-50 pointer-events-none'
+                            )}
+                        >
+                            <div className="p-6 border-b border-white/[0.1] bg-white/[0.02]">
+                                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-rose-300">
+                                    Image Options
+                                </h2>
+
+                                {/* Step indicators */}
+                                <div className="flex items-center justify-between mt-6">
+                                    {steps.map((step, index) => (
+                                        <React.Fragment key={step.id}>
+                                            <div
+                                                className={cn(
+                                                    'relative flex flex-col items-center cursor-pointer',
+                                                    index <= currentStep
+                                                        ? 'text-white'
+                                                        : 'text-white/40'
+                                                )}
+                                                onClick={() =>
+                                                    uploadedImage &&
+                                                    setCurrentStep(index)
+                                                }
+                                            >
+                                                <div
+                                                    className={cn(
+                                                        'w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all',
+                                                        currentStep === index
+                                                            ? 'bg-gradient-to-r from-indigo-500 to-rose-500 ring-4 ring-indigo-500/20'
+                                                            : index <
+                                                              currentStep
+                                                            ? 'bg-indigo-600'
+                                                            : 'bg-white/10'
+                                                    )}
+                                                >
+                                                    {index < currentStep ? (
+                                                        <Check className="w-4 h-4" />
+                                                    ) : (
+                                                        index + 1
+                                                    )}
+                                                </div>
+                                                <span className="mt-2 text-xs font-medium">
+                                                    {step.title}
+                                                </span>
+                                            </div>
+                                            {index < steps.length - 1 && (
+                                                <div
+                                                    className={cn(
+                                                        'flex-1 h-[2px] mx-2',
+                                                        index < currentStep
+                                                            ? 'bg-indigo-500'
+                                                            : 'bg-white/10'
+                                                    )}
+                                                />
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Main content area */}
+                            <div className="border-b border-white/[0.1] bg-white/[0.02] flex justify-between items-center p-4">
+                                <h3 className="text-lg font-medium text-white/90">
+                                    {steps[currentStep].title}
+                                </h3>
+
+                                <div className="flex gap-3">
+                                    <button
                                         onClick={() =>
-                                            index <= Math.max(1, currentStep) &&
-                                            setCurrentStep(index)
+                                            currentStep > 0 &&
+                                            setCurrentStep(currentStep - 1)
                                         }
+                                        disabled={currentStep === 0}
+                                        className={cn(
+                                            'p-2 rounded-xl border transition-colors',
+                                            currentStep === 0
+                                                ? 'border-white/5 bg-white/5 text-white/20 cursor-not-allowed'
+                                                : 'border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white'
+                                        )}
                                     >
-                                        <div
-                                            className={cn(
-                                                'w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all',
-                                                currentStep === index
-                                                    ? 'bg-gradient-to-r from-indigo-500 to-rose-500 ring-4 ring-indigo-500/20'
-                                                    : index < currentStep
-                                                    ? 'bg-indigo-600'
-                                                    : 'bg-white/10'
-                                            )}
-                                        >
-                                            {index < currentStep ? (
-                                                <Check className="w-4 h-4" />
-                                            ) : (
-                                                index + 1
-                                            )}
-                                        </div>
-                                        <span className="mt-2 text-xs font-medium">
-                                            {step.title}
-                                        </span>
-                                    </div>
-                                    {index < steps.length - 1 && (
-                                        <div
-                                            className={cn(
-                                                'flex-1 h-[2px] mx-4 transition-all',
-                                                index < currentStep
-                                                    ? 'bg-indigo-500'
-                                                    : 'bg-white/10'
-                                            )}
-                                        />
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </div>
+                                        <ArrowLeft className="w-4 h-4" />
+                                    </button>
+
+                                    <button
+                                        onClick={() =>
+                                            currentStep < steps.length - 1 &&
+                                            setCurrentStep(currentStep + 1)
+                                        }
+                                        disabled={
+                                            currentStep === steps.length - 1
+                                        }
+                                        className={cn(
+                                            'p-2 rounded-xl border transition-colors',
+                                            currentStep === steps.length - 1
+                                                ? 'border-white/5 bg-white/5 text-white/20 cursor-not-allowed'
+                                                : 'border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white'
+                                        )}
+                                    >
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <motion.div
+                                key={currentStep}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.3 }}
+                                className={cn(
+                                    'p-6 overflow-y-auto h-[calc(42vh-130px)] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:scrollbar-thumb-white/20',
+                                    !uploadedImage && 'blur-sm'
+                                )}
+                            >
+                                {steps[currentStep].component}
+                            </motion.div>
+                        </motion.div>
                     </div>
 
-                    {/* Main content area */}
+                    {/* Right side - Prompt and History */}
                     <motion.div
-                        key={currentStep}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex-1 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.1] overflow-hidden"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="lg:w-1/3 flex flex-col"
                     >
-                        <div className="p-6 border-b border-white/[0.1] bg-white/[0.02] flex justify-between items-center">
-                            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-rose-300">
-                                {steps[currentStep].title}
+                        {/* Prompt Section */}
+                        <div className="bg-white/[0.02] backdrop-blur-sm border border-white/[0.1] rounded-2xl p-6 mb-6">
+                            <h2 className="text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-rose-300">
+                                Your Vision
                             </h2>
 
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={prevStep}
-                                    disabled={currentStep === 0}
-                                    className={cn(
-                                        'p-3 rounded-xl border transition-colors',
-                                        currentStep === 0
-                                            ? 'border-white/5 bg-white/5 text-white/20 cursor-not-allowed'
-                                            : 'border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white'
-                                    )}
-                                >
-                                    <ArrowLeft className="w-5 h-5" />
-                                </button>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm text-white/60">
+                                            Describe what you want to generate
+                                        </label>
+                                        <span className="text-xs text-white/40">
+                                            {prompt.length}/500 characters
+                                        </span>
+                                    </div>
+                                    <textarea
+                                        value={prompt}
+                                        onChange={(e) =>
+                                            setPrompt(e.target.value)
+                                        }
+                                        maxLength={500}
+                                        className="w-full h-24 bg-black/20 rounded-lg p-3 text-white border border-white/10 focus:border-white/30 outline-none resize-none"
+                                        placeholder="A futuristic cityscape with neon lights and flying cars..."
+                                    />
+                                </div>
 
                                 <button
-                                    onClick={nextStep}
+                                    onClick={handleGenerate}
                                     disabled={
-                                        currentStep === steps.length - 1 ||
-                                        (currentStep === 0 && !uploadedImage)
+                                        !uploadedImage || !prompt || isLoading
                                     }
                                     className={cn(
-                                        'p-3 rounded-xl border transition-colors',
-                                        currentStep === steps.length - 1 ||
-                                            (currentStep === 0 &&
-                                                !uploadedImage)
-                                            ? 'border-white/5 bg-white/5 text-white/20 cursor-not-allowed'
-                                            : 'border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white'
+                                        'w-full py-3 rounded-lg text-white font-medium transition-all flex items-center justify-center gap-2',
+                                        !uploadedImage || !prompt || isLoading
+                                            ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                                            : 'bg-gradient-to-r from-indigo-500 to-rose-500 hover:opacity-90'
                                     )}
                                 >
-                                    <ArrowRight className="w-5 h-5" />
+                                    {isLoading ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                            <span>Generating...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Sparkles className="w-4 h-4" />
+                                            <span>Generate Image</span>
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>
 
-                        <div className="p-6 overflow-y-auto h-[calc(90vh-200px)] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:scrollbar-thumb-white/20">
-                            {steps[currentStep].component}
+                        {/* History Section */}
+                        <div className="bg-white/[0.02] backdrop-blur-sm border border-white/[0.1] rounded-2xl flex-1 overflow-hidden">
+                            <div className="p-6 border-b border-white/[0.1]">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-rose-300">
+                                        Previous Generations
+                                    </h2>
+                                    <Clock className="w-5 h-5 text-white/60" />
+                                </div>
+                            </div>
+
+                            <div className="overflow-y-auto h-[calc(90vh-430px)] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:scrollbar-thumb-white/20 p-4">
+                                {previousGenerations.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {previousGenerations.map((item) => (
+                                            <div
+                                                key={item.id}
+                                                className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] transition-all group cursor-pointer"
+                                            >
+                                                <div className="flex gap-4">
+                                                    <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                                                        <Image
+                                                            src={item.imageUrl}
+                                                            alt={item.prompt}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                        <div
+                                                            className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                                                            onClick={() =>
+                                                                setHistoryPreview(
+                                                                    item.imageUrl
+                                                                )
+                                                            }
+                                                        >
+                                                            <Maximize2 className="w-5 h-5 text-white" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm text-white/80 line-clamp-2 mb-2">
+                                                            {item.prompt}
+                                                        </p>
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-xs text-white/40">
+                                                                {item.timestamp}
+                                                            </span>
+                                                            <button className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                                                                Use Again
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-full text-center px-6 py-10">
+                                        <ImageIcon className="w-12 h-12 text-white/20 mb-4" />
+                                        <h3 className="text-lg font-medium text-white/60 mb-2">
+                                            No history yet
+                                        </h3>
+                                        <p className="text-sm text-white/40">
+                                            Your generated images will appear
+                                            here
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </motion.div>
-
-                    {/* Preview dialog */}
-                    <ImagePreviewDialog
-                        isOpen={isPreviewOpen}
-                        onClose={() => setIsPreviewOpen(false)}
-                        imageUrl={uploadedImage}
-                    />
                 </div>
             </div>
+
+            {/* Preview dialogs */}
+            <ImagePreviewDialog
+                isOpen={isPreviewOpen}
+                onClose={() => setIsPreviewOpen(false)}
+                imageUrl={uploadedImage}
+            />
+
+            <ImagePreviewDialog
+                isOpen={!!historyPreview}
+                onClose={() => setHistoryPreview(null)}
+                imageUrl={historyPreview}
+            />
         </div>
     )
 }
@@ -384,30 +558,30 @@ const UploadSection = ({
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="w-full max-w-xl"
+                    className="w-full"
                 >
                     <div
                         onDragOver={onDragOver}
                         onDragLeave={onDragLeave}
                         onDrop={onDrop}
                         className={cn(
-                            'border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300',
+                            'border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 h-full flex flex-col justify-center',
                             isDragging
                                 ? 'border-indigo-500 bg-indigo-500/10'
                                 : 'border-white/20 hover:border-white/40'
                         )}
                     >
                         <div className="flex flex-col items-center">
-                            <Upload className="w-16 h-16 text-white/40 mb-6" />
-                            <h3 className="text-xl font-semibold text-white/90 mb-3">
+                            <Upload className="w-12 h-12 text-white/40 mb-4" />
+                            <h3 className="text-xl font-semibold text-white/90 mb-2">
                                 Upload a Reference Image
                             </h3>
-                            <p className="text-white/60 mb-4">
+                            <p className="text-white/60 mb-3">
                                 Start by uploading an image you'd like to
                                 transform
                             </p>
-                            <p className="text-sm text-white/40 mb-6">or</p>
-                            <label className="px-8 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-rose-500 text-white font-medium hover:opacity-90 transition-opacity cursor-pointer">
+                            <p className="text-sm text-white/40 mb-3">or</p>
+                            <label className="px-6 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-rose-500 text-white font-medium hover:opacity-90 transition-opacity cursor-pointer">
                                 Browse Files
                                 <input
                                     type="file"
@@ -423,7 +597,7 @@ const UploadSection = ({
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="w-full max-w-2xl"
+                    className="w-full"
                 >
                     <div className="rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm">
                         <div className="relative aspect-video group">
@@ -443,9 +617,9 @@ const UploadSection = ({
                             </button>
                         </div>
 
-                        <div className="p-6 space-y-3">
+                        <div className="p-4 space-y-2">
                             <div className="flex items-center justify-between">
-                                <p className="text-lg font-medium text-white/90">
+                                <p className="text-base font-medium text-white/90">
                                     Your Reference Image
                                 </p>
                                 <div className="flex gap-2">
@@ -453,10 +627,10 @@ const UploadSection = ({
                                         onClick={handleRemoveImage}
                                         className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors group"
                                     >
-                                        <Trash2 className="w-5 h-5 text-red-400 group-hover:text-red-300" />
+                                        <Trash2 className="w-4 h-4 text-red-400 group-hover:text-red-300" />
                                     </button>
                                     <label className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer group">
-                                        <Upload className="w-5 h-5 text-white/60 group-hover:text-white/90" />
+                                        <Upload className="w-4 h-4 text-white/60 group-hover:text-white/90" />
                                         <input
                                             type="file"
                                             className="hidden"
@@ -469,11 +643,11 @@ const UploadSection = ({
 
                             <div className="h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                            <div className="flex items-center gap-2 text-sm text-white/40">
-                                <ImageIcon className="w-4 h-4" />
+                            <div className="flex items-center gap-2 text-xs text-white/40">
+                                <ImageIcon className="w-3 h-3" />
                                 <span>
-                                    Click the upload icon to replace or continue
-                                    to the next step
+                                    Now select options below to customize your
+                                    generation
                                 </span>
                             </div>
                         </div>
@@ -540,144 +714,6 @@ const ImageSelectionStep = ({
                         </div>
                     </motion.div>
                 ))}
-            </div>
-        </motion.div>
-    )
-}
-
-interface PromptAndGenerateStepProps {
-    uploadedImage: string | null
-    prompt: string
-    setPrompt: (prompt: string) => void
-    isLoading: boolean
-    handleGenerate: () => void
-}
-
-const PromptAndGenerateStep = ({
-    uploadedImage,
-    prompt,
-    setPrompt,
-    isLoading,
-    handleGenerate
-}: PromptAndGenerateStepProps) => {
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="max-w-2xl mx-auto"
-        >
-            <div className="space-y-8">
-                <div className="flex flex-col md:flex-row gap-8">
-                    {uploadedImage && (
-                        <div className="md:w-1/2">
-                            <h3 className="text-lg font-semibold text-white/90 mb-3">
-                                Reference Image
-                            </h3>
-                            <div className="rounded-xl overflow-hidden border border-white/10">
-                                <div className="relative aspect-square">
-                                    <Image
-                                        src={uploadedImage}
-                                        alt="Reference"
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className={uploadedImage ? 'md:w-1/2' : 'w-full'}>
-                        <h3 className="text-lg font-semibold text-white/90 mb-3">
-                            Your Selections
-                        </h3>
-                        <div className="space-y-3 text-white/80">
-                            <div className="p-4 rounded-lg bg-white/[0.03] border border-white/[0.08]">
-                                <span className="font-medium text-indigo-300">
-                                    Background:
-                                </span>{' '}
-                                Option{' '}
-                                {1 +
-                                    Math.max(
-                                        0,
-                                        Number(
-                                            useGenerateStore.getState()
-                                                .selectedSections?.section1 ?? 0
-                                        )
-                                    )}
-                            </div>
-                            <div className="p-4 rounded-lg bg-white/[0.03] border border-white/[0.08]">
-                                <span className="font-medium text-indigo-300">
-                                    Style:
-                                </span>{' '}
-                                Option{' '}
-                                {1 +
-                                    Math.max(
-                                        0,
-                                        Number(
-                                            useGenerateStore.getState()
-                                                .selectedSections?.section2 ?? 0
-                                        )
-                                    )}
-                            </div>
-                            <div className="p-4 rounded-lg bg-white/[0.03] border border-white/[0.08]">
-                                <span className="font-medium text-indigo-300">
-                                    Lighting:
-                                </span>{' '}
-                                Option{' '}
-                                {1 +
-                                    Math.max(
-                                        0,
-                                        Number(
-                                            useGenerateStore.getState()
-                                                .selectedSections?.section3 ?? 0
-                                        )
-                                    )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="space-y-4 bg-white/[0.03] p-6 rounded-xl border border-white/[0.08]">
-                    <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                            <label className="text-sm text-white/60">
-                                Describe your vision
-                            </label>
-                            <span className="text-xs text-white/40">
-                                {prompt.length}/500 characters
-                            </span>
-                        </div>
-                        <textarea
-                            value={prompt}
-                            onChange={(e) => setPrompt(e.target.value)}
-                            maxLength={500}
-                            className="w-full h-24 bg-black/20 rounded-lg p-3 text-white border border-white/10 focus:border-white/30 outline-none resize-none"
-                            placeholder="Add details about what you want to generate..."
-                        />
-                    </div>
-                    <button
-                        onClick={handleGenerate}
-                        disabled={!uploadedImage || !prompt || isLoading}
-                        className={cn(
-                            'w-full py-3 rounded-lg text-white font-medium transition-all flex items-center justify-center gap-2',
-                            !uploadedImage || !prompt || isLoading
-                                ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                                : 'bg-gradient-to-r from-indigo-500 to-rose-500 hover:opacity-90'
-                        )}
-                    >
-                        {isLoading ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                <span>Generating...</span>
-                            </>
-                        ) : (
-                            <>
-                                <Sparkles className="w-4 h-4" />
-                                <span>Generate Image</span>
-                            </>
-                        )}
-                    </button>
-                </div>
             </div>
         </motion.div>
     )
