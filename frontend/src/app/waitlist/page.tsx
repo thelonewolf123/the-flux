@@ -232,11 +232,11 @@ export default function Waitlist() {
                             {/* Success Message */}
                             <div className="space-y-3">
                                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-rose-300">
-                                    You're on the list!
+                                    You&apos;re on the list!
                                 </h2>
                                 <p className="text-white/60">
-                                    Thank you for joining our waitlist. We'll
-                                    notify you as soon as we launch.
+                                    Thank you for joining our waitlist.
+                                    We&apos;ll notify you as soon as we launch.
                                 </p>
                             </div>
 

@@ -24,10 +24,6 @@ const dummyImages = Array(4).fill('/placeholder-image.jpg')
 
 // Sample previous generations for history section
 
-interface SelectedImages {
-    [key: string]: number | null
-}
-
 interface ImagePreviewDialogProps {
     isOpen: boolean
     onClose: () => void
@@ -584,7 +580,6 @@ interface ImageSelectionStepProps {
 }
 
 const ImageSelectionStep = ({
-    sectionId,
     selectedImage,
     onImageSelect,
     description

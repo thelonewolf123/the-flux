@@ -209,7 +209,7 @@ export default function Login() {
                                 href="/auth/signup"
                                 className="text-sm text-white/60 hover:text-white transition-colors block"
                             >
-                                Don't have an account?{' '}
+                                Don&apos;t have an account?{' '}
                                 <span className="text-indigo-400 hover:text-indigo-300">
                                     Sign up
                                 </span>
