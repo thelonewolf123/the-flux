@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // List of routes you want to protect
-  const protectedRoutes = ['/dashboard', '/generation', '/settings']
+  const protectedRoutes = ['/dashboard', '/generation', '/settings',"/"]
 
   if (protectedRoutes.includes(pathname) && !isAuthenticated) {
     const redirectUrl = new URL('/auth/login', request.url)

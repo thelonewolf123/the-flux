@@ -28,6 +28,7 @@ import {
     SheetTitle,
     SheetTrigger
 } from '@/components/ui/sheet'
+import LogoutBtn from '@/components/buttons/logout-btn'
 
 const navigation = [
     { name: 'Dashboard', href: '/dashboard' },
@@ -131,9 +132,8 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator className="bg-white/10" />
-                                    <DropdownMenuItem className="text-red-500">
-                                        <LogOut className="mr-2 h-4 w-4 " />
-                                        <span>Log out</span>
+                                    <DropdownMenuItem className="p-0 hover:bg-transparent focus:bg-transparent">
+                                        <LogoutBtn className="w-full px-2 py-1.5" />
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
